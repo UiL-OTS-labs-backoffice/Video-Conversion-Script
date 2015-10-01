@@ -13,12 +13,14 @@ bitrate="0"
 scale="0"
 ext=".mp4" 
 mux="mp4" 
-vlc="vlc"  
+vlc="cvlc"  
 
 IFS='|' read -a array <<< "$src"
 
 for a in "${array[@]}"; do
 destination_name=$a$ext
-$vlc -I dummy -vvv "$a" --sout "#transcode{vcodec=$vcodec,vb=$bitrate,scale=$scale}:standard{mux=$mux,dst=\"$destination_name\",access=file}" vlc://quit
+$vlc "$a" --sout "#transcode{vcodec=$vcodec,vb=$bitrate,scale=$scale, audio-sync, threads=4}:standard{mux=$mux,dst=\"$destination_name\",access=file}" vlc://quit 2> /dev/null
+echo "Converted $a to $destination_name"
 done 
 echo "done"
+
